@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname,'public')));
 
 // Routes
 app.get('/', (req, res) => {
