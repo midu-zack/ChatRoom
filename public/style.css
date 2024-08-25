@@ -1,0 +1,194 @@
+/* General styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    background-color: black;
+    color: red;
+}
+
+/* App container */
+.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Chat screen */
+.chat-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    max-width: 500px;
+    background-color: black;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid red;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: red;
+    color: black;
+    border-bottom: 1px solid black;
+    position: relative;
+}
+
+.header .logo {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.header button {
+    background-color: black;
+    border: 1px solid red;
+    padding: 8px 15px;
+    color: red;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 14px;
+}
+
+.header button:hover {
+    background-color: red;
+    color: black;
+}
+
+/* System message */
+.system-message {
+    padding: 10px;
+    background-color: #222;
+    color: red;
+    font-size: 12px;
+    text-align: center;
+    border-bottom: 1px solid red;
+}
+
+/* Messages */
+.messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: black;
+}
+
+/* Message container */
+.message {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    line-height: 1.4;
+    position: relative;
+}
+
+/* Align messages sent by the user to the right */
+.my-message {
+    background-color: red;
+    color: black;
+    margin-left: auto;
+    align-self: flex-end;
+    border: 1px solid black;
+}
+
+/* Align messages from others to the left */
+.other-message {
+    background-color: black;
+    color: red;
+    border: 1px solid red;
+}
+
+/* Timestamp */
+.timestamp {
+    font-size: 10px;
+    color: gray;
+    margin-left: 10px;
+}
+
+/* Message text */
+.message .text {
+    font-size: 14px;
+}
+
+/* Textbox */
+.textbox {
+    display: flex;
+    padding: 10px;
+    background-color: black;
+    border-top: 1px solid red;
+}
+
+.textbox input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid red;
+    background-color: black;
+    color: red;
+    margin-right: 10px;
+}
+
+.textbox input[type="text"]::placeholder {
+    color: red;
+}
+
+.textbox button {
+    padding: 10px 15px;
+    background-color: red;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.textbox button:hover {
+    background-color: black;
+    color: red;
+    border: 1px solid red;
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 480px) {
+    .chat-screen {
+        width: 100%;
+        max-width: none;
+    }
+
+    .header {
+        padding: 8px;
+    }
+
+    .header .logo {
+        font-size: 16px;
+    }
+
+    .textbox input[type="text"], 
+    .textbox button {
+        padding: 8px;
+    }
+
+    .message {
+        max-width: 90%;
+        font-size: 14px;
+    }
+
+    .message .timestamp {
+        display: none;
+    }
+}
