@@ -1,15 +1,33 @@
 const express = require('express')
 const path = require('path');
-const { loginUser } = require('./controllers/Login');
+const bodyparser = require('body-parser')
+require('dotenv').config()
+const mongoose =require('mongoose')
+ 
+const loginRouter = require('./routes/loginRouter')
 const app = express()
 const PORT = 4000 ;
+
+//  Middleware to parse form data
+app.use(express.urlencoded({ extended: true }));
+
+
 
 // connecting template 
 app.set('view engine','hbs')
 // connect the views 
 app.use(express.static(path.join(__dirname,"views")))
 
- app.use("/",loginUser)
+
+// Connect to MongoDB Atlas using the environment variable
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB Atlas'))
+    .catch(err => console.log('Failed to connect to MongoDB:', err));
+
+
+
+
+ app.use("/",loginRouter)
 
 app.listen(PORT,()=>{
     console.log(`sever running for ${PORT}`)

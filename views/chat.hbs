@@ -1,0 +1,64 @@
+{{!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <div class="chat-screen active">
+            <div class="header">
+                <div class="logo">Chat Room</div>
+                <button id="exit-chat">Exit</button>
+            </div>
+            <div class="system-message"></div>
+            <div class="messages"></div>
+            <div class="textbox">
+                <input type="text" id="message-input" placeholder="Type a message">
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+  --}}
+
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- User List Section -->
+        <div class="user-list">
+            <div class="header">
+                <div class="logo">Available Users</div>
+            </div>
+            <ul id="users">
+                <!-- This list will be populated dynamically with saved users -->
+            </ul>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat-screen">
+            <div class="header">
+                <div class="logo">Chat Room</div>
+                <button id="exit-chat">Exit</button>
+            </div>
+            <div class="system-message"></div>
+            <div class="messages"></div>
+            <div class="textbox">
+                <input type="text" id="message-input" placeholder="Type a message">
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
