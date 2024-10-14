@@ -131,10 +131,11 @@
         <div class="users-container row">
             {{#each users}}
             <div class="user col">
+                 <a href="/chat/{{this._id}}" style="text-decoration: none;">
                 <img src="https://via.placeholder.com/60" alt="User Profile">
                 <h4>{{this.name}}</h4>
+                </a>
                 <p>Online</p>
-
                 <!-- Three dots menu -->
                 <div class="menu-btn" onclick="toggleMenu('{{this._id}}')">
                     <span>&#x22EE;</span> <!-- Vertical Ellipsis (three dots) -->

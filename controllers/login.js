@@ -8,6 +8,16 @@ const loginUser = (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 }
+
+const allUsers =(req,res)=>{
+    try {
+        res.render("mainBody")
+    } catch (error) {
+        console.error("Error rendering login page:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
 const submit = async (req, res) => {
     try {
         const { name } = req.body; // Destructure to get name
@@ -95,6 +105,26 @@ const updateUserName = async (req, res) => {
     }
 };
 
+// Route to render chat page
+const openChat = async (req, res) => {
+    try {
+        // Fetch the user by ID
+        const user = await User.findById(req.params.id);
+        
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Render the chat page and pass the user data
+        res.render('chat', { user });
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+}
+
+
+
+
 
 module.exports = {
     loginUser,
@@ -102,5 +132,7 @@ module.exports = {
     deleteUser,
     getUserById,
     updateUserName,
+    openChat,
+    allUsers
 
 };

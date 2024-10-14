@@ -1,84 +1,60 @@
-const express = require('express')
+const express = require('express');
+const http = require('http'); // Import the HTTP module
+const socketIo = require('socket.io');
 const path = require('path');
-require('dotenv').config()
-const mongoose =require('mongoose')
- 
+require('dotenv').config();
+const mongoose = require('mongoose');
+
 const loginRouter = require('./routes/loginRouter');
 const bodyParser = require('body-parser');
-const app = express()
-const PORT = 4000 ;
+ 
+const app = express();
+const PORT = 4000;
 
-//  Middleware to parse form data
+// Create the HTTP server with Express
+const server = http.createServer(app);
+
+// Initialize Socket.io with the server
+const io = socketIo(server);
+
+// Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Connecting template 
+app.set('view engine', 'hbs');
 
-
-// connecting template 
-app.set('view engine','hbs')
-// connect the views 
-app.use(express.static(path.join(__dirname,"views")))
-
+// Connect the views 
+app.use(express.static(path.join(__dirname, "views")));
 
 // Connect to MongoDB Atlas using the environment variable
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.log('Failed to connect to MongoDB:', err));
 
+// Socket.io logic
+io.on('connection', (socket) => {
+    console.log('A user connected');
 
+    // Listen for incoming messages
+    socket.on('chat message', (msg) => {
+        console.log('Message received: ', msg);
 
+        // Broadcast the message to all connected users
+        io.emit('chat message', msg);
+    });
 
- app.use("/",loginRouter)
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
+});
 
-app.listen(PORT,()=>{
-    console.log(`sever running for ${PORT}`)
-})
+// Use login router
+app.use("/", loginRouter);
+ 
 
-
-
-// const express = require('express');
-// const http = require('http');
-// const socketio = require('socket.io');
-// const path = require('path');
-
-// const app = express();
-// const server = http.createServer(app);
-// const io = socketio(server);
-// const PORT = 3000;
-// // Serve static files
-// app.use(express.static(path.join(__dirname,'public')));
-
-// // Routes
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
-
-// app.get('/chat', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', 'chat.html'));
-// });
-
-// // Socket events
-// io.on('connection', socket => { 
-//     socket.on('newuser', username => {
-//         socket.broadcast.emit('chat', {
-//             username: 'System',
-//             text: `${username} has joined the chat`,
-//             time: new Date().toLocaleTimeString()
-//         });
-//     });
-
-//     socket.on('chat', message => {
-//         io.emit('chat', message); // Broadcast to everyone
-//     });
-
-//     socket.on('disconnect', () => {
-//         console.log('User disconnected');
-//     });
-// });
-
-// // Start server
-
-// server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
+// Start the server
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
