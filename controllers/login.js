@@ -11,7 +11,7 @@ const loginUser = (req, res) => {
 const submit = async (req, res) => {
     try {
         const { name } = req.body; // Destructure to get name
-        console.log('This is user name:', name); // Log the received name
+       
 
         if (!name) {
             return res.status(400).send('Username is required');
@@ -29,11 +29,11 @@ const submit = async (req, res) => {
         const newUser = new User({ name });
         await newUser.save();
 
-        console.log('User saved:', name);
+        console.log('User saved name :', name);
 
         // Fetch all users from the database after saving new user
         const users = await User.find({});
-        console.log("All users:", users);
+       
 
         // Render chat page with current user and all users from the database
         return res.render('mainBody', { name, users });
@@ -46,7 +46,11 @@ const submit = async (req, res) => {
 
 
 const deleteUser = (req, res) => {
+
     const userId = req.params.userId;
+
+    console.log("this is userId",userId);
+    
   
     User.findByIdAndDelete(userId)
       .then(() => {
@@ -61,39 +65,42 @@ const deleteUser = (req, res) => {
   
 
 
-// Function to update user settings
-
-const updateSettings = async (req, res) => {
+ 
+// Controller to fetch user details by ID
+const getUserById = async (req, res) => {
     try {
-        const { userId, username, icon } = req.body;
+        const user = await User.findById(req.params.id);
 
-        // Check if the user ID is a valid ObjectId
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ success: false, message: 'Invalid user ID' });
-        }
-
-        // Find and update the user
-        const updatedUser = await User.findByIdAndUpdate(userId, { name: username, icon }, { new: true });
-
-        // If the user was not found
-        if (!updatedUser) {
+        console.log('this is choose the edit user ', user)
+        if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
-
-        // Send the updated user details
-        return res.status(200).json({ success: true, user: updatedUser });
+        res.json({ success: true, user });
     } catch (error) {
-        console.error('Error updating user settings:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
- 
 
+// Controller to update user name by ID
+const updateUserName = async (req, res) => {
+    const { username } = req.body;
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, { name: username }, { new: true });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.json({ success: true, message: 'User updated successfully', user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
 
 module.exports = {
     loginUser,
     submit,
     deleteUser,
-    updateSettings,
+    getUserById,
+    updateUserName,
+
 };

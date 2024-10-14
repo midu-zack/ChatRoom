@@ -1,264 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Group Users Display</title>
-  <!-- Bootstrap CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Users Display</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <style>
-    body {
-      background-color: #000; /* Black background */
-      color: #fff; /* Default white text color */
-    }
+    <style>
+        body {
+            background-color: #000;
+            /* Black background */
+            color: #fff;
+            /* Default white text color */
+        }
 
-    .users-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 10px;
-      max-height: 80vh;
-      overflow-y: auto; /* Scrollable content */
-    }
+        .users-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+            /* Scrollable content */
+        }
 
-    .user {
-      background-color: #ff0000; /* Red background */
-      border-radius: 10px;
-      padding: 10px;
-      margin: 10px;
-      text-align: center;
-      flex-basis: 100px; /* Adjusting for icon-style layout */
-      flex-grow: 1;
-      position: relative; /* Position relative for 3-dots menu */
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Red shadow */
-    }
+        .user {
+            background-color: #ff0000;
+            /* Red background */
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+            flex-basis: 100px;
+            /* Adjusting for icon-style layout */
+            flex-grow: 1;
+            position: relative;
+            /* Position relative for 3-dots menu */
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            /* Red shadow */
+        }
 
-    .user img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #000; /* Black border */
-      margin-bottom: 10px;
-    }
+        .user img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #000;
+            /* Black border */
+            margin-bottom: 10px;
+        }
 
-    .user h4 {
-      margin: 0;
-      font-size: 14px;
-      color: #fff; /* White text for username */
-    }
+        .user h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #fff;
+            /* White text for username */
+        }
 
-    .user p {
-      margin: 5px 0;
-      color: #000; /* Black text for status */
-      font-size: 12px;
-    }
+        .user p {
+            margin: 5px 0;
+            color: #000;
+            /* Black text for status */
+            font-size: 12px;
+        }
 
-    /* Three dots menu button */
-    .menu-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-      color: #fff;
-    }
+        /* Three dots menu button */
+        .menu-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #fff;
+        }
 
-    /* Dropdown menu hidden initially */
-    .menu-options {
-      display: none;
-      position: absolute;
-      top: 30px;
-      right: 10px;
-      background-color: #000;
-      color: #fff;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      z-index: 1;
-    }
+        /* Dropdown menu hidden initially */
+        .menu-options {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 10px;
+            background-color: #000;
+            color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            z-index: 1;
+        }
 
-    /* Option items */
-    .menu-options a {
-      display: block;
-      padding: 5px;
-      color: #fff;
-      text-decoration: none;
-      font-size: 14px;
-    }
+        /* Option items */
+        .menu-options a {
+            display: block;
+            padding: 5px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+        }
 
-    .menu-options a:hover {
-      background-color: #ff0000; /* Red background on hover */
-    }
+        .menu-options a:hover {
+            background-color: #ff0000;
+            /* Red background on hover */
+        }
 
-    /* For smaller screens */
-    @media (max-width: 576px) {
-      .user {
-        flex-basis: 45%;
-      }
-    }
+        /* For smaller screens */
+        @media (max-width: 576px) {
+            .user {
+                flex-basis: 45%;
+            }
+        }
 
-    /* For medium screens */
-    @media (min-width: 576px) and (max-width: 768px) {
-      .user {
-        flex-basis: 30%;
-      }
-    }
+        /* For medium screens */
+        @media (min-width: 576px) and (max-width: 768px) {
+            .user {
+                flex-basis: 30%;
+            }
+        }
 
-    /* For large screens */
-    @media (min-width: 768px) {
-      .user {
-        flex-basis: 20%;
-      }
-    }
-  </style>
+        /* For large screens */
+        @media (min-width: 768px) {
+            .user {
+                flex-basis: 20%;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="users-container row">
-      {{#each users}}
-      <div class="user col">
-        <img src="https://via.placeholder.com/60" alt="User Profile">
-        <h4>{{this.name}}</h4>
-        <p>Online</p>
+    <div class="container">
+        <div class="users-container row">
+            {{#each users}}
+            <div class="user col">
+                <img src="https://via.placeholder.com/60" alt="User Profile">
+                <h4>{{this.name}}</h4>
+                <p>Online</p>
 
-        <!-- Three dots menu -->
-        <div class="menu-btn" onclick="toggleMenu('{{this._id}}')">
-          <span>&#x22EE;</span> <!-- Vertical Ellipsis (three dots) -->
-        </div>
+                <!-- Three dots menu -->
+                <div class="menu-btn" onclick="toggleMenu('{{this._id}}')">
+                    <span>&#x22EE;</span> <!-- Vertical Ellipsis (three dots) -->
+                </div>
 
-        <!-- Menu options (hidden by default) -->
-        <div class="menu-options" id="menu-{{this._id}}">
-          <a href="#" class="delete-option" onclick="deleteUser('{{this._id}}')">Delete</a>
-          <a href="#" class="settings-option" data-bs-toggle="modal" data-bs-target="#settingsModal-{{this._id}}">Settings</a>
-        </div>
+                <!-- Menu options (hidden by default) -->
+                <div class="menu-options" id="menu-{{this._id}}" style="display: none;">
+                    <a href="#" class="delete-option" onclick="deleteUser('{{this._id}}')">Delete</a>
+                    <a href="#" class="settings-option" data-bs-toggle="modal"
+                        data-bs-target="#settingsModal-{{this._id}}">Settings</a>
+                </div>
 
-        <!-- Modal for Settings -->
-        <div class="modal fade" id="settingsModal-{{this._id}}" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="settingsModalLabel">Settings for {{this.name}}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form id="settingsForm-{{this._id}}" onsubmit="event.preventDefault(); updateUserSettings('{{this._id}}');">
-                  <input type="hidden" name="userId" value="{{this._id}}">
-                  <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" value="{{this.name}}" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="icon" class="form-label">Icon</label>
-                    <input type="text" class="form-control" id="icon" name="icon" placeholder="Icon URL">
-                  </div>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      {{/each}}
+                <!-- Modal for Settings -->
+                <div class="modal fade" id="settingsModal-{{this._id}}" tabindex="-1"
+                    aria-labelledby="settingsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="settingsModalLabel">Settings for {{this.name}}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                               <form id="settingsForm-{{this._id}}" onsubmit="event.preventDefault(); updateUserSettings('{{this._id}}');">
+    <input type="hidden" name="userId" value="{{this._id}}">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username-{{this._id}}" name="username" value="{{this.name}}" required>
     </div>
-  </div>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>
+ 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            {{/each}}
+        </div>
+    </div>
 
-  <!-- Bootstrap JS for responsiveness -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- SweetAlert2 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap JS for responsiveness -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <script>
-    // Toggle menu display
-    function toggleMenu(userId) {
-        const menu = document.getElementById(`menu-${userId}`);
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    // Delete user (make a POST request to the backend)
-    function deleteUser(userId) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`/delete/${userId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Deleted!', 'User has been deleted.', 'success').then(() => {
-                                location.reload(); // Reload the page after deleting
-                            });
-                        } else {
-                            Swal.fire('Error!', data.message, 'error');
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire('Error!', 'There was an error processing your request.', 'error');
-                    });
-            }
-        });
-    }
-
-    // Function to update user settings
-    async function updateUserSettings(userId) {
-        // Get the form element
-        const form = document.getElementById(`settingsForm-${userId}`);
-
-        // Create a FormData object from the form
-        const formData = new FormData(form);
-
-        // Prepare data to send
-        const data = {
-            userId: formData.get('userId'),
-            username: formData.get('username'),
-            icon: formData.get('icon') // Optional, include if you want to update the icon
-        };
-
-        try {
-            // Send a POST request to your backend API
-            const response = await fetch('/settings', {
-                method: 'POST', // Use POST for updating
-                headers: {
-                    'Content-Type': 'application/json', // Specify content type as JSON
-                },
-                body: JSON.stringify(data) // Send the data as a JSON string
-            });
-
-            // Check if the response is ok (status in the range 200-299)
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            // Parse the JSON response from the server
-            const result = await response.json();
-
-            // Log the result or handle success/failure messages
-            console.log(result); // For debugging, check the response from the server
-
-            // Optionally, close the modal
-            $('#settingsModal-' + userId).modal('hide');
-
-            // Refresh user list or update the UI as needed
-            // Example: refreshUserList();
-            location.reload(); // Reload the page to reflect changes
-        } catch (error) {
-            console.error('Error updating user settings:', error);
-            alert('Error updating user settings. Please try again later.');
+    <script>
+        // Toggle menu display
+        function toggleMenu(userId) {
+            const menu = document.getElementById(`menu-${userId}`);
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
-    }
-  </script>
+
+        // Function to update user settings (change the username)
+        function updateUserSettings(userId) {
+            const username = document.getElementById(`username-${userId}`).value;
+
+            // Send the request to the backend to update the username
+            fetch(`/users/${userId}/update-username`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success!', 'User settings have been updated.', 'success').then(() => {
+                        location.reload(); // Reload the page after updating
+                    });
+                } else {
+                    Swal.fire('Error!', 'Failed to update settings.', 'error');
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error!', 'There was an error processing your request.', 'error');
+            });
+        }
+    
+
+ 
+
+
+        // Delete user (make a POST request to the backend)
+        function deleteUser(userId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/delete/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire('Deleted!', 'User has been deleted.', 'success').then(() => {
+                                    location.reload(); // Reload the page after deleting
+                                });
+                            } else {
+                                Swal.fire('Error!', data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Error!', 'There was an error processing your request.', 'error');
+                        });
+                }
+            });
+        }
+
+    
+    </script>
 
 </body>
+
+
 </html>

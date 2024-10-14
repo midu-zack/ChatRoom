@@ -1,15 +1,16 @@
 const express = require('express')
 const path = require('path');
-const bodyparser = require('body-parser')
 require('dotenv').config()
 const mongoose =require('mongoose')
  
-const loginRouter = require('./routes/loginRouter')
+const loginRouter = require('./routes/loginRouter');
+const bodyParser = require('body-parser');
 const app = express()
 const PORT = 4000 ;
 
 //  Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 
 
