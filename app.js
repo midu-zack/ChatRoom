@@ -4,33 +4,57 @@ const socketIo = require('socket.io');
 const path = require('path');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const session = require('express-session');
 
-const loginRouter = require('./routes/loginRouter');
+const authRouter = require('./routes/authRouter');
+const connectionRouter = require('./routes/connectionsRouter')
+const chatRouter = require("./routes/chatRouter")
 const bodyParser = require('body-parser');
+
  
 const app = express();
 const PORT = 4000;
 
-// Create the HTTP server with Express
+ 
 const server = http.createServer(app);
-
-// Initialize Socket.io with the server
+ 
 const io = socketIo(server);
 
-// Middleware to parse form data
+
+ 
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Connecting template 
+
+app.use(session({
+    secret: 'your_secret_key', // Replace with a strong secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set 'secure' to true if using HTTPS
+  }));
+  
+
+ 
 app.set('view engine', 'hbs');
 
-// Connect the views 
+ 
 app.use(express.static(path.join(__dirname, "views")));
 
-// Connect to MongoDB Atlas using the environment variable
+ 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.log('Failed to connect to MongoDB:', err));
+
+
+     
+app.use("/", authRouter);
+app.use("/",connectionRouter)
+app.use("/",chatRouter)
+ 
+
+
+
+
 
 // Socket.io logic
 io.on('connection', (socket) => {
@@ -50,9 +74,6 @@ io.on('connection', (socket) => {
     });
 });
 
-// Use login router
-app.use("/", loginRouter);
- 
 
 // Start the server
 server.listen(PORT, () => {

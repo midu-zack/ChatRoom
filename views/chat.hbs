@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat App</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -24,28 +22,16 @@
             flex-direction: column;
             background-color: #1c1c1c;
             padding: 10px;
-            overflow: hidden;
         }
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             background-color: #c8102e;
             padding: 10px;
         }
         .logo {
             font-size: 1.5em;
             font-weight: bold;
-        }
-        .exit-form {
-            display: inline;
-        }
-        #exit-chat {
-            background-color: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1em;
         }
         .messages {
             flex: 1;
@@ -89,27 +75,16 @@
             background-color: #555;
             align-self: flex-start;
         }
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            #exit-chat {
-                margin-top: 10px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- Chat Section -->
         <div class="chat-screen">
             <div class="header">
-                <div class="logo">Chat Room</div>
-               <form class="exit-form" action="/api/exit-chat" method="GET">
-    <button id="exit-chat" type="submit">Exit</button>
-</form>
-
+                <div class="logo">{{user.name}} Chatting with {{recipient.name}}</div>
+                <form action="/api/exit-chat" method="GET">
+                    <button id="exit-chat" type="submit">Exit</button>
+                </form>
             </div>
             <div class="messages" id="messages"></div>
             <div class="textbox">
@@ -122,19 +97,41 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        const recipientId = "{{recipient._id}}"; // Getting the recipient ID from the backend
+
+        // Fetch messages on page load
+        fetch(`/chat/messages?recipientId=${recipientId}`)
+            .then(response => response.json())
+            .then(messages => {
+                messages.forEach(msg => {
+                    const className = msg.sender === "{{user._id}}" ? 'my-message' : 'other-message';
+                    addMessage(msg.content, className);
+                });
+            });
 
         // Send message on button click
         document.getElementById('send-message').addEventListener('click', () => {
             const messageInput = document.getElementById('message-input');
             const msg = messageInput.value;
             if (msg) {
-                socket.emit('chat message', msg);
+                fetch('/chat/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content: msg, recipientId }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addMessage(msg, 'my-message'); // Show my message
+                    }
+                });
                 messageInput.value = ''; // Clear input
-                addMessage(msg, 'my-message'); // Show my message
             }
         });
 
-        // Receive messages
+        // Receive real-time messages from the other user
         socket.on('chat message', (msg) => {
             addMessage(msg, 'other-message'); // Show other's message
         });
