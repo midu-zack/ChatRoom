@@ -3,148 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-        }
-        .app {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        .chat-screen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #1c1c1c;
-            padding: 10px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            background-color: #c8102e;
-            padding: 10px;
-        }
-        .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .textbox {
-            display: flex;
-            margin-top: 10px;
-        }
-        #message-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #333;
-            color: white;
-        }
-        #send-message {
-            padding: 10px;
-            border: none;
-            background-color: #c8102e;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-        .message {
-            margin: 5px 0;
-            padding: 5px 10px;
-            border-radius: 10px;
-        }
-        .my-message {
-            background-color: #c8102e;
-            align-self: flex-end;
-        }
-        .other-message {
-            background-color: #555;
-            align-self: flex-start;
-        }
-    </style>
+    <title>Chat</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Optional: Include your CSS file -->
 </head>
 <body>
-    <div class="app">
-        <div class="chat-screen">
-            <div class="header">
-                <div class="logo">{{user.name}} Chatting with {{recipient.name}}</div>
-                <form action="/api/exit-chat" method="GET">
-                    <button id="exit-chat" type="submit">Exit</button>
-                </form>
-            </div>
-            <div class="messages" id="messages"></div>
-            <div class="textbox">
-                <input type="text" id="message-input" placeholder="Type a message" autocomplete="off">
-                <button id="send-message">Send</button>
-            </div>
-        </div>
+    <div id="chatContainer">
+        <div id="messages" class="messages"></div> <!-- Message container -->
+        <form id="chatForm">
+            <input type="text" id="messageContent" placeholder="Type your message..." required>
+            <input type="hidden" id="senderId" value="{{user._id}}"> <!-- Sender ID -->
+            <input type="hidden" id="recipientId" value="{{recipient._id}}"> <!-- Recipient ID -->
+            <button type="submit">Send</button>
+        </form>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script> <!-- Include Socket.IO client -->
     <script>
-        const socket = io();
-        const recipientId = "{{recipient._id}}"; // Getting the recipient ID from the backend
+        const socket = io(); // Initialize socket.io connection
 
-        // Fetch messages on page load
-        fetch(`/chat/messages?recipientId=${recipientId}`)
-            .then(response => response.json())
-            .then(messages => {
-                messages.forEach(msg => {
-                    const className = msg.sender === "{{user._id}}" ? 'my-message' : 'other-message';
-                    addMessage(msg.content, className);
-                });
-            });
-
-        // Send message on button click
-        document.getElementById('send-message').addEventListener('click', () => {
-            const messageInput = document.getElementById('message-input');
-            const msg = messageInput.value;
-            if (msg) {
-                fetch('/chat/send-message', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ content: msg, recipientId }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        addMessage(msg, 'my-message'); // Show my message
-                    }
-                });
-                messageInput.value = ''; // Clear input
-            }
+        // Listen for incoming messages
+        socket.on('chat message', function(msg) {
+            // Display the message
+            const messagesContainer = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${msg.sender}: ${msg.content}`; // Adjust according to your data structure
+            messagesContainer.appendChild(messageElement);
         });
 
-        // Receive real-time messages from the other user
-        socket.on('chat message', (msg) => {
-            addMessage(msg, 'other-message'); // Show other's message
-        });
+        const form = document.getElementById('chatForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const senderId = document.getElementById('senderId').value;
+            const recipientId = document.getElementById('recipientId').value;
+            const content = document.getElementById('messageContent').value;
 
-        // Function to add messages to the chat
-        function addMessage(msg, className) {
-            const messagesDiv = document.getElementById('messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.textContent = msg;
-            messageDiv.className = `message ${className}`;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
-        }
+            // Emit the message
+            socket.emit('chat message', { senderId, recipientId, content });
+
+            // Clear the input
+            document.getElementById('messageContent').value = '';
+        });
     </script>
 </body>
 </html>
