@@ -8,7 +8,7 @@ const session = require('express-session');
 
 // Import models
 const Message = require('./models/Message');  // Make sure the Message model is correctly imported
-
+const chatController = require('./controllers/chat');
 const authRouter = require('./routes/authRouter');
 const connectionRouter = require('./routes/connectionsRouter');
 const chatRouter = require("./routes/chatRouter");
@@ -41,46 +41,21 @@ app.use("/", authRouter);
 app.use("/", connectionRouter);
 app.use("/", chatRouter);
 
-// Socket.io logic
+
+// When a client connects to the server
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log('User connected:', socket.id);
 
-        // Listen for incoming messages
-        socket.on('chat message', async (msgData) => {
-            const { senderId, recipientId, content } = msgData;
-        
-            console.log('Received message data:', msgData); // Log entire message data
-        
-            try {
-                // Validate ID formats
-                console.log('Sender ID:', senderId);
-                console.log('Recipient ID:', recipientId);
-        
-                if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(recipientId)) {
-                    throw new Error('Invalid sender or recipient ID');
-                }
-        
-                // Save message to the database
-                const newMessage = new Message({
-                    sender: senderId,
-                    recipient: recipientId,
-                    content: content,
-                });
-                await newMessage.save();
-        
-                // Emit the message to both users
-                io.to(senderId).emit('chat message', newMessage);
-                io.to(recipientId).emit('chat message', newMessage);
-            } catch (error) {
-                console.error('Error saving message:', error);
-            }
-        });
-        
+    // Retrieve userId from the handshake query
+    const userId = socket.handshake.query.userId;
+    socket.join(userId); // Join a room with userId
 
-        // Handle disconnection
-        socket.on('disconnect', () => {
-            console.log('User disconnected');
-        });
+    // Handle message event
+    chatController.sendMessage(socket, io);
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
+    });
 });
 
 // Start the server

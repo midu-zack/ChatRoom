@@ -3,46 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Optional: Include your CSS file -->
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script> <!-- Ensure Socket.io is included -->
 </head>
 <body>
-    <div id="chatContainer">
-        <div id="messages" class="messages"></div> <!-- Message container -->
-        <form id="chatForm">
-            <input type="text" id="messageContent" placeholder="Type your message..." required>
-            <input type="hidden" id="senderId" value="{{user._id}}"> <!-- Sender ID -->
-            <input type="hidden" id="recipientId" value="{{recipient._id}}"> <!-- Recipient ID -->
-            <button type="submit">Send</button>
+
+    <div id="chat-container">
+        <div id="chat-box">
+            <!-- Display previous messages from the database -->
+            {{#each messages}}
+                <div class="message">
+                    <strong>{{senderId}}</strong>: {{content}} <span class="timestamp">{{timestamp}}</span>
+                </div>
+            {{/each}}
+            <div id="messages"></div> <!-- Real-time messages will be appended here -->
+        </div>
+        <form id="sendMessageForm">
+            <input type="text" id="messageInput" placeholder="Type your message here" autocomplete="off"/>
+            <button type="submit" id="sendButton">Send</button>
         </form>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script> <!-- Include Socket.IO client -->
     <script>
-        const socket = io(); // Initialize socket.io connection
+        const socket = io();
 
-        // Listen for incoming messages
-        socket.on('chat message', function(msg) {
-            // Display the message
-            const messagesContainer = document.getElementById('messages');
-            const messageElement = document.createElement('div');
-            messageElement.textContent = `${msg.sender}: ${msg.content}`; // Adjust according to your data structure
-            messagesContainer.appendChild(messageElement);
+        // Get userId and recipientId from the template variables (rendered from the server)
+        const senderId = '{{userId}}';  // userId set on the server-side
+        const recipientId = '{{recipientId}}';  // recipientId set on the server-side
+
+        const sendButton = document.getElementById('sendButton');
+        const messageInput = document.getElementById('messageInput');
+        const messageBox = document.getElementById('messages');
+
+        // Event listener for form submission
+        document.getElementById('sendMessageForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const message = messageInput.value.trim();
+            if (message) {
+                // Emit the message to the server
+                socket.emit('message', {
+                    senderId: senderId,
+                    recipientId: recipientId, 
+                    content: message
+                });
+
+                // Clear the input after sending
+                messageInput.value = '';
+            }
         });
 
-        const form = document.getElementById('chatForm');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const senderId = document.getElementById('senderId').value;
-            const recipientId = document.getElementById('recipientId').value;
-            const content = document.getElementById('messageContent').value;
-
-            // Emit the message
-            socket.emit('chat message', { senderId, recipientId, content });
-
-            // Clear the input
-            document.getElementById('messageContent').value = '';
+        // Listen for incoming messages and append them to the chatbox
+        socket.on('messageSaved', (messageData) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.innerHTML = `<strong>${messageData.senderId}</strong>: ${messageData.content} <span class="timestamp">${new Date(messageData.timestamp).toLocaleString()}</span>`;
+            messageBox.appendChild(messageElement);
         });
     </script>
+
 </body>
 </html>
