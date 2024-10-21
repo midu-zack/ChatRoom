@@ -5,6 +5,11 @@ exports.getChatPage = async (req, res) => {
     const userId = req.session.userId; // Assuming session contains userId
     const recipientId = req.query.recipientId || 'recipient-id'; // Get recipientId from the query
 
+    console.log("This is user id ", userId);
+    console.log("This is recipientId",recipientId);
+    
+    
+
     try {
         // Fetch previous messages between the two users
         const messages = await Message.find({

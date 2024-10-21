@@ -24,20 +24,26 @@ const search = async (req, res) => {
 };
 
 
-
 const person = async (req, res) => {
-    const { id } = req.params;
+    const { id: recipientId } = req.params;  // This is the recipient ID from the URL
 
     try {
-        // Find the user by ID
-        const user = await User.findById(id).select('name email'); // You can select other fields if needed
+        // Find the recipient user by their ID
+        const recipient = await User.findById(recipientId).select('name email'); // Select additional fields if needed
 
-        if (!user) {
+        if (!recipient) {
             return res.status(404).send('User not found');
         }
 
-        // Render chat.hbs and pass user data to the view
-        res.render('chat', { user });
+        // Assuming you are storing the current user's ID in session or some kind of authentication
+        const userId = req.session.userId;  // Adjust if using JWT or other auth mechanisms
+
+        // Render the chat.hbs and pass both userId and recipientId
+        res.render('chat', {
+            userId,        // Pass the current user's ID
+            recipientId,   // Pass the recipient's ID
+            recipientName: recipient.name,  // Pass the recipient's name (for display purposes)
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

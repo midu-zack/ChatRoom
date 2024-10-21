@@ -3,65 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Room</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="/socket.io/socket.io.js"></script> <!-- Ensure Socket.io is included -->
+    <link rel="stylesheet" href="/style.css">
+    <title>Chat</title>
 </head>
 <body>
-
-    <div id="chat-container">
-        <div id="chat-box">
-            <!-- Display previous messages from the database -->
-            {{#each messages}}
-                <div class="message">
-                    <strong>{{senderId}}</strong>: {{content}} <span class="timestamp">{{timestamp}}</span>
-                </div>
+    <div class="chat-container">
+        <h2>Available Users</h2>
+        <input type="text" id="userSearch" placeholder="Search users...">
+        <ul id="userList">
+            {{#each users}}
+                <li data-user-id="{{this._id}}">{{this.name}}</li>
             {{/each}}
-            <div id="messages"></div> <!-- Real-time messages will be appended here -->
+        </ul>
+
+        <h2>Chat</h2>
+        <div id="chatMessages">
+            <!-- Chat messages will be displayed here -->
         </div>
-        <form id="sendMessageForm">
-            <input type="text" id="messageInput" placeholder="Type your message here" autocomplete="off"/>
-            <button type="submit" id="sendButton">Send</button>
-        </form>
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button id="sendMessage">Send</button>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
-        // Get userId and recipientId from the template variables (rendered from the server)
-        const senderId = '{{userId}}';  // userId set on the server-side
-        const recipientId = '{{recipientId}}';  // recipientId set on the server-side
-
-        const sendButton = document.getElementById('sendButton');
-        const messageInput = document.getElementById('messageInput');
-        const messageBox = document.getElementById('messages');
-
-        // Event listener for form submission
-        document.getElementById('sendMessageForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const message = messageInput.value.trim();
-            if (message) {
-                // Emit the message to the server
-                socket.emit('message', {
-                    senderId: senderId,
-                    recipientId: recipientId, 
-                    content: message
+        // Function to load messages
+        const loadMessages = (recipientId) => {
+            // Fetch messages for the selected user
+            fetch(`/api/messages/${recipientId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = ''; // Clear existing messages
+                    data.messages.forEach(message => {
+                        const messageElement = document.createElement('div');
+                        messageElement.textContent = `${message.senderId}: ${message.content}`;
+                        chatMessages.appendChild(messageElement);
+                    });
                 });
+        };
 
-                // Clear the input after sending
-                messageInput.value = '';
+        // User selection event
+        document.getElementById('userList').addEventListener('click', (event) => {
+            const userId = event.target.dataset.userId;
+            if (userId) {
+                loadMessages(userId);
             }
         });
 
-        // Listen for incoming messages and append them to the chatbox
-        socket.on('messageSaved', (messageData) => {
+        // Sending a message
+        document.getElementById('sendMessage').addEventListener('click', async () => {
+            const messageInput = document.getElementById('messageInput');
+            const recipientId = /* Get selected user's ID */;
+            const content = messageInput.value;
+
+            await fetch('/api/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recipientId, content })
+            });
+
+            messageInput.value = ''; // Clear the input after sending
+        });
+
+        // Listen for incoming messages
+        socket.on('chatMessage', (message) => {
+            const chatMessages = document.getElementById('chatMessages');
             const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.innerHTML = `<strong>${messageData.senderId}</strong>: ${messageData.content} <span class="timestamp">${new Date(messageData.timestamp).toLocaleString()}</span>`;
-            messageBox.appendChild(messageElement);
+            messageElement.textContent = `${message.senderId}: ${message.content}`;
+            chatMessages.appendChild(messageElement);
         });
     </script>
-
 </body>
 </html>
