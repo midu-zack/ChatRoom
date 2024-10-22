@@ -1,51 +1,51 @@
 const Message = require('../models/Message');
+// Fetch chat messages between two users
+const getChatMessages = async (req, res) => {
+    const { userId, recipientId } = req.params;
 
-// Render chat page and send previous messages
-exports.getChatPage = async (req, res) => {
-    const userId = req.session.userId; // Assuming session contains userId
-    const recipientId = req.query.recipientId || 'recipient-id'; // Get recipientId from the query
-
-    console.log("This is user id ", userId);
-    console.log("This is recipientId",recipientId);
-    
-    
+    console.log('Received request parameters:', req.params); // Check if parameters are being received
 
     try {
-        // Fetch previous messages between the two users
+        // Fetch messages from the database
         const messages = await Message.find({
             $or: [
                 { senderId: userId, recipientId: recipientId },
                 { senderId: recipientId, recipientId: userId }
             ]
-        }).sort({ timestamp: 1 });
+        }).sort({ createdAt: 1 }); // Sort messages by creation time
 
-        res.render('chat', { userId, recipientId, messages });
+
+
+        console.log('This is messages', messages);
+
+        return res.status(200).json(messages);
     } catch (error) {
-        res.status(500).send('Error loading chat page');
+        console.error("Error fetching messages:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
+// Save a new message
+const sendMessage = async (data) => {
 
-exports.sendMessage = (socket, io) => {
-    socket.on('message', async (messageData) => {
-        try {
-            // Log message details to the console
-            console.log(`Sender: ${messageData.senderId}, Message: ${messageData.content}, Recipient: ${messageData.recipientId}`);
+    console.log('helloo zackeyy how are you', data);
 
-            // Save message to the database
-            const newMessage = new Message({
-                senderId: messageData.senderId,  // Ensure senderId is correct
-                recipientId: messageData.recipientId,  // Ensure recipientId is correct
-                content: messageData.content,
-                timestamp: new Date()
-            });
-            await newMessage.save();
+    try {
+        console.log('This is messages', data);
 
-            // Emit the message to both the sender and recipient in real-time
-            io.to(messageData.senderId).emit('messageSaved', newMessage);
-            io.to(messageData.recipientId).emit('messageSaved', newMessage);
-        } catch (error) {
-            console.error('Error saving message:', error);
-        }
-    });
+        const newMessage = new Message(data);
+
+
+
+        await newMessage.save(); // Save the message to the database
+        return newMessage;
+    } catch (error) {
+        console.error("Error saving message:", error);
+        throw new Error("Error saving message");
+    }
+};
+
+module.exports = {
+    getChatMessages,
+    sendMessage
 };
